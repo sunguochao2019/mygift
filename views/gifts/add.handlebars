@@ -1,0 +1,21 @@
+{{#each errors}}
+<div class="alert alert-danger">{{errMessage}}</div>
+
+{{else}}
+
+{{/each}}
+
+<div class="card card-body">
+    <h3>我的愿望</h3>
+    <form action="/gifts" method="post">
+        <div class="form-group">
+            <label for="title">标题</label>
+            <input type="text" class="form-control" name="giftTitle" value="{{giftTitle}}" required>
+        </div>
+        <div class="form-group">
+            <label for="details">详情</label>
+            <textarea class="form-control" name="giftDetails" value="{{giftDetails}}" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">提交</button>
+    </form>
+</div>

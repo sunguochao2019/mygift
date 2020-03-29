@@ -1,0 +1,13 @@
+{{#each giftList}}
+
+<div class="card card-body mb-2">
+    <h4>{{'giftTitle'}}</h4>
+    <p>{{giftDetails}}</p>
+    <a href="/gifts/edit/{{_id}}" class="btn btn-dark btn-blick">编辑</a>
+</div>
+
+{{else}}
+
+<p>没有礼物哦！</p>
+
+{{/each}}
