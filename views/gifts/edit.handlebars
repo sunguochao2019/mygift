@@ -7,15 +7,16 @@
 
 <div class="card card-body">
     <h3>我的愿望</h3>
-    <form action="/gifts" method="post">
+    <form action="/gifts/{{giftEdit.id}}?_method=PUT" method="post">
+        <input type="hidden" name="_method" value="PUT">
         <div class="form-group">
             <label for="title">标题</label>
-            <input type="text" class="form-control" name="giftTitle" value="{{gift.giftTitle}}" required>
+            <input type="text" class="form-control" name="giftTitle" value="{{giftEdit.giftTitle}}" required>
         </div>
         <div class="form-group">
             <label for="details">详情</label>
-            <textarea class="form-control" name="giftDetails" value="{{gift.giftDetails}}" required></textarea>
+            <textarea class="form-control" name="giftDetails" value="" required>{{giftEdit.giftDetails}}</textarea>
         </div>
-        <button type="submit" class="btn btn-primary">报错</button>
+        <button type="submit" class="btn btn-primary">保存</button>
     </form>
 </div>

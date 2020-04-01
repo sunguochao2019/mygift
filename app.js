@@ -1,117 +1,88 @@
 const express = require('express');
 const exphbs = require('express-handlebars');
+const path = require('path');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const methodOverride = require('method-override');
+const session = require('express-session');
+const flash = require('connect-flash');
+const passport = require('passport');
+
 const app = express();
 
-//引入操作类
-var mongoose = require('mongoose');
-//设置数据库连接字符串
-var DB_CONN_STR = "mongodb://127.0.0.1/gift";
+//引入路由
+const gifts = require('./routes/gifts');
+const users = require('./routes/users');
+require("./config/passport")(passport);
+
+const db = require("./config/database")
 //连接到数据库
-mongoose.connect(DB_CONN_STR)
+mongoose.connect(db.mongoURL)
     .then(() => {
-        console.log("数据库连接成功！")
+        console.log("MongoDB connected....");
     })
     .catch(err => {
-        console.log("连接数据库失败！" + err)
+        console.log(err);
     })
 
 //引入模型
 require("./models/Gift");
 const Gift = mongoose.model('gifts');
 
-//handlebars middleware
+//handlebars middlewaress
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 
 // create application/json parser
-var jsonParser = bodyParser.json()
-// create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
+const jsonParser = bodyParser.json()
+const urlencodedParser = bodyParser.urlencoded({ extended: false })
 
+//使用静态文件
+app.use(express.static(path.join(__dirname, 'public')))
 
-const port = 5000;
+//method-override用法
+app.use(methodOverride('_method'));
 
-//配置路由
+//session & flash
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true,
+}))
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(flash());
+
+//配置全局变量;
+app.use((req, res, next) => {
+    res.locals.success_msg = req.flash('success_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    res.locals.error = req.flash('error');
+    res.locals.user = req.user || null;
+    next();
+})
+
+//首页
 app.get('/', (req, res) => {
-    const title = '赶快打开宝箱'
+    const title = '添加你的愿望吧！'
     res.render('index', {
         title: title
     });
 })
 
+//关于我们
 app.get('/about', (req, res) => {
     res.render('about');
 })
 
-app.get('/gifts', (req, res) => {
-    Gift.find({}).then((gift) => {
-        console.log(gift);
-        res.render('gifts/index', {
-            giftList: gift
-        })
-    })
-    // Gift.find({})
-    //     .sort({ date: "desc" })
-    //     .then((gifts) => {
+//r使用outer
+app.use('/gifts', gifts);
+app.use('/users', users);
 
-    //         res.render('gifts/index', {
-    //             giftList: gifts
-    //         });
-    //     })
-})
-//添加
-app.get('/gifts/add', (req, res) => {
-    res.render('gifts/add');
-})
-//编辑
-app.get("/gifts/edit/:id", (req, res) => {
-    Gift.findOne({
-        _id: req.params.id
-    }).then(gift => {
-
-        res.render("gifts/edit", {
-            giftEdit: gift
-        });
-    })
-
-})
-
-app.post('/gifts', urlencodedParser, (req, res) => {
-    //console.log(req.body)
-    let errors = [];
-
-    if (!req.body.giftTitle) {
-        errors.push({ errMessage: '请输入标题！' })
-    }
-
-    if (!req.body.giftDetails) {
-        errors.push({ errMessage: '请输入详情' })
-    }
-
-    if (errors.length > 0) {
-        res.render("gifts/add", {
-            errors: errors,
-            giftTitle: req.body.giftTitle,
-            giftDetails: req.body.giftDetails
-        })
-    } else {
-        // res.send('OK')
-        const newUser = {
-            giftTitle: req.body.giftTitle,
-            giftDetails: req.body.giftDetails
-        }
-        new Gift(newUser)
-            .save()
-            .then(gift => {
-                //console.log(gift + '222222')
-                res.redirect('/gifts')
-            })
-    }
-
-
-    //res.render('gift');
-})
+const port = process.eventNames.PORT || 5000;
 
 app.listen(port, () => {
     console.log(`Server started on http://localhost:${port}`)

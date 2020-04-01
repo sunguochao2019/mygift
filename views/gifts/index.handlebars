@@ -1,9 +1,15 @@
 {{#each giftList}}
 
 <div class="card card-body mb-2">
-    <h4>{{'giftTitle'}}</h4>
+    <h4>{{giftTitle}}</h4>
     <p>{{giftDetails}}</p>
     <a href="/gifts/edit/{{_id}}" class="btn btn-dark btn-blick">编辑</a>
+
+    <form method="POST" action="/gifts/{{_id}}?_method=DELETE">
+        <input type="hidden" name="method" value="DELETE" />
+        <button type="submit" class="btn btn-danger btn-block mt-2">删除</button>
+    </form>
+
 </div>
 
 {{else}}

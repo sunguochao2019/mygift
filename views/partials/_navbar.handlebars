@@ -1,6 +1,8 @@
 {{!-- navbar --}}
 <nav class="navbar navbar-expand-sm navbar-dark bg-primary mb-3">
-    <a class="navbar-brand" href="/">番茄向前看</a>
+    <a class="navbar-brand" href="#">
+        <img src="/images/logo.png" width="30" height="30" alt="">
+    </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -14,18 +16,32 @@
                 <a class="nav-link" href="/about">About</a>
             </li>
         </ul>
+
         <div class="navbar-nav ml-auto">
+            {{#if user}}
             <div class="nav-item dropdown">
                 <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    我的愿望
+
+                    {{#each user}}
+                    {{userName}}
+                    {{/each}}
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="/gifts">我的原意</a>
                     <a class="dropdown-item" href="/gifts/add">添加愿望</a>
+                    <a class="dropdown-item" href="/users/logout">退出</a>
 
                 </div>
             </div>
+            {{else}}
+            <li class="nav-item">
+                <a class="nav-link" href="/users/login">登录</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/users/register">注册</a>
+            </li>
+            {{/if}}
         </div>
     </div>
 </nav>

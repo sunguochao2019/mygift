@@ -1,23 +1,23 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const GiftSchema = new Schema({
-    giftTitle: {
+const UserSchema = new Schema({
+    userName: {
         type: String,
         required: true
     },
-    giftDetails: {
+    password: {
         type: String,
         required: true
     },
-    user: {
+    email: {
         type: String,
         required: true
     },
-    getDate: {
+    date: {
         type: Date,
         default: Date.now
     }
 })
 
-mongoose.model('gifts', GiftSchema);
+mongoose.model('users', UserSchema);
